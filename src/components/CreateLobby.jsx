@@ -1,9 +1,12 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Redirect } from "react-router-dom";
 
-function CreateLobby() {
+function CreateLobby({ redirect }) {
   const [lobbyName, updateLobbyName] = useState("");
-
+  console.log(redirect);
+  if (redirect) {
+    return <Redirect to="/lobby/lobby" />;
+  }
   return (
     <div>
       <form>
@@ -14,7 +17,7 @@ function CreateLobby() {
             value={lobbyName}
             onChange={(e) => updateLobbyName(e.target.value)}
           />
-          <Link to={"lobby-" + lobbyName}>
+          <Link to={"/lobby-" + lobbyName}>
             <input type="submit" value="Create Lobby" />
           </Link>
         </label>
