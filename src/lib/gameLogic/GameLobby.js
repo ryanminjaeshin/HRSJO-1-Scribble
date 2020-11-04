@@ -159,7 +159,6 @@ class GameLobby {
     });
 
     this.emitEvent(newUserUpdateMsg);
-    this.checkLobbyReadyStatus();
   }
   checkLobbyReadyStatus() {
     const allUsersReady = Object.values(this.users).every(
@@ -198,6 +197,27 @@ class GameLobby {
       this.decrementdrawTimer();
     }
   }
+
+  evaluateGuess({ guess, userName }) {
+    let message = guess.toLowerCase();
+    let correctAnswer = this.currentWord.toLowerCase();
+    if (message === correctAnswer) {
+      let points = this.calculatePoints();
+
+      let newScore = this.users[userName].currentScore + points;
+
+      this.updateUser({ userName, property: "currentScore", value: newScore });
+      return true;
+    } else {
+      //send a message
+      return false;
+    }
+  }
+
+  calculatePoints() {
+    return Math.floor((this.drawerTimer / this.timerLength) * 100);
+  }
+
   emitEvent(options) {
     if (Array.isArray(options)) {
       options.forEach((option) => this.emitEvent(option));

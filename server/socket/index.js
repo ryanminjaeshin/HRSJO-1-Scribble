@@ -1,11 +1,6 @@
 import { io } from "../index";
 import SocketEvents from "../../src/lib/enums/socketEvents";
 import GameLobby from "../../src/lib/gameLogic/GameLobby";
-import { Socket } from "socket.io-client";
-
-// io.on("connect", (socket) => {
-//   console.log(socket);
-// });
 
 const lobbies = {};
 
@@ -28,5 +23,11 @@ dynamicNspLobby.on("connect", (socket) => {
 
   socket.on(SocketEvents.UPDATE_USER, (options) => {
     currentLobby.updateUser(options);
+    currentLobby.checkLobbyReadyStatus();
+  });
+
+  socket.on(SocketEvents.SUBMIT_CHAT_MESSAGE, (data, callback) => {
+    let isCorrect = currentLobby.evaluateGuess(data);
+    callback(isCorrect);
   });
 });
