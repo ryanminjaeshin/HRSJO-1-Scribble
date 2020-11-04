@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import ChatRoom from "./ChatRoom";
 import SetUser from "./SetUser";
-// import Events from "../../lib/enums/events";
 import establishIoConnection from "../lib/socket/";
 import SocketEvents from "../lib/enums/socketEvents";
 import GameBoard from "./GameBoard";

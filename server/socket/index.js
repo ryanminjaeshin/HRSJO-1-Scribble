@@ -30,4 +30,9 @@ dynamicNspLobby.on("connect", (socket) => {
     let isCorrect = currentLobby.evaluateGuess(data);
     callback(isCorrect);
   });
+
+  socket.on(SocketEvents.DRAW, function (data) {
+    console.log("Received: 'mouse' " + data.x + " " + data.y);
+    socket.broadcast.emit(SocketEvents.DRAW, data);
+  });
 });

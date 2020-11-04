@@ -9,5 +9,6 @@ const SocketEvents = Object.freeze({
   GAME_OVER: "GAME_OVER",
   SUBMIT_CHAT_MESSAGE: "SUBMIT_CHAT_MESSAGE",
   START_YOUR_TURN: "START_YOUR_TURN",
+  DRAW: "DRAW",
 });
 export default SocketEvents;

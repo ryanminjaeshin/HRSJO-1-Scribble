@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
-import ScribbleBoard from "./ScribbleBoard";
+import React, { useState, useEffect, Suspense } from "react";
 import SocketEvents from "../lib/enums/socketEvents";
-import { Socket } from "socket.io-client";
+const ScribbleBoard = React.lazy(() => import("./ScribbleBoard"));
 
 function GameBoard({ initialGameData, initialUserState, socket, userName }) {
   const [gameData, updateGameData] = useState(initialGameData);
@@ -39,7 +38,12 @@ function GameBoard({ initialGameData, initialUserState, socket, userName }) {
       <div>Current Round: {gameData.currentRound}</div>
       <div>Draw Timer: {gameData.drawTimer}</div>
       <div>Current Drawer: {gameData.currentDrawerName} </div>
-      <ScribbleBoard />
+      <Suspense fallback={<dev>Loading...</dev>}>
+        <ScribbleBoard
+          socket={socket}
+          currentDrawer={userName === gameData.currentDrawerName}
+        />
+      </Suspense>
     </div>
   );
 }
