@@ -1,5 +1,7 @@
 import User from "./User";
 import SocketEvents from "../enums/socketEvents";
+import { EventOptions } from "../utils";
+import { Socket } from "socket.io-client";
 
 class GameLobby {
   constructor(nameSpace) {
@@ -13,7 +15,7 @@ class GameLobby {
   }
 
   //reducing timer
-  roundTimer() {
+  decrementRoundTimer() {
     setInterval(() => {
       this.roundTimer -= 1;
       let target = this.lobbyName;
@@ -25,35 +27,91 @@ class GameLobby {
 
   addUser(userData) {
     const { userName, userId } = userData;
-    let message, target, event;
+    let message,
+      target,
+      event,
+      options = [];
 
     if (!this.users[userName]) {
       console.log(`${userName} doesn't exist`);
+
       this.users[userName] = new User(userName, userId);
-      message = {
-        success: true,
-        message: `${userName} has joined the lobby!`,
-        time: new Date(),
-      };
-      event = SocketEvents.LOBBY_MESSAGE;
+
+      const newUserSuccessMsg = new EventOptions({
+        message: {
+          success: true,
+          message: `${userName} has joined the lobby!`,
+          time: new Date(),
+        },
+        event: SocketEvents.LOBBY_MESSAGE,
+      });
+
+      const newUserUpdateMsg = new EventOptions({
+        message: {
+          data: this.users,
+        },
+        event: SocketEvents.USERS_UPDATED,
+      });
+
+      options.push(newUserSuccessMsg, newUserUpdateMsg);
     } else {
-      console.log(`${userName} exists`);
-      message = {
-        success: true,
-        message: "User Exists already homie",
-        time: new Date(),
-      };
-      target = userId;
-      event = SocketEvents.USER_MESSAGE;
+      const userAlreadyExistsMsg = new EventOptions({
+        message: {
+          success: true,
+          message: "User Exists already homie",
+          time: new Date(),
+        },
+        target: userId,
+        event: SocketEvents.USER_MESSAGE,
+      });
+      options.push(userAlreadyExistsMsg);
     }
-    this.emitEvent(target, message, event);
+    this.emitEvent(options);
   }
 
-  emitEvent(target, message, event) {
-    if (!target) {
-      this.nameSpace.emit(event, message);
+  updateUser(options) {
+    console.log(options);
+    this.users[options.userName].updateProperty(
+      options.property,
+      options.value
+    );
+    const newUserUpdateMsg = new EventOptions({
+      message: {
+        data: this.users,
+      },
+      event: SocketEvents.USERS_UPDATED,
+    });
+
+    this.emitEvent(newUserUpdateMsg);
+    this.checkLobbyReadyStatus();
+  }
+  checkLobbyReadyStatus() {
+    const allUsersReady = Object.values(this.users).every(
+      (user) => user.readyStatus
+    );
+    const { totalRounds, currentRound, roundTimer, currentDrawer } = this;
+
+    const newUserUpdateMsg = new EventOptions({
+      message: {
+        success: true,
+        data: { totalRounds, currentRound, roundTimer, currentDrawer },
+      },
+      event: SocketEvents.START_GAME,
+    });
+
+    if (allUsersReady) {
+      this.emitEvent(newUserUpdateMsg);
+    }
+  }
+  emitEvent(options) {
+    if (Array.isArray(options)) {
+      options.forEach((option) => this.emitEvent(option));
     } else {
-      this.nameSpace.to(target).emit(event, message);
+      if (!options.target) {
+        this.nameSpace.emit(options.event, options.message);
+      } else {
+        this.nameSpace.to(options.target).emit(options.event, options.message);
+      }
     }
   }
 }

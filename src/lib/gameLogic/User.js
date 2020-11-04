@@ -5,6 +5,11 @@ class User {
     this.currentScore;
     this.currentGuess;
     this.guessedCorrectly;
+    this.readyStatus = false;
+  }
+
+  updateProperty(property, value) {
+    this[property] = value;
   }
 }
 

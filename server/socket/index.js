@@ -1,6 +1,7 @@
 import { io } from "../index";
 import SocketEvents from "../../src/lib/enums/socketEvents";
 import GameLobby from "../../src/lib/gameLogic/GameLobby";
+import { Socket } from "socket.io-client";
 
 // io.on("connect", (socket) => {
 //   console.log(socket);
@@ -23,5 +24,9 @@ dynamicNspLobby.on("connect", (socket) => {
   socket.on(SocketEvents.ADD_USER_TO_LOBBY, (userName) => {
     const userObject = { userId: socket.id, userName };
     currentLobby.addUser(userObject);
+  });
+
+  socket.on(SocketEvents.UPDATE_USER, (options) => {
+    currentLobby.updateUser(options);
   });
 });

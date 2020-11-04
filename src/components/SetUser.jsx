@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import SocketEvents from "../lib/enums/socketEvents";
+import UserList from "./UserList";
 
-function SetUser({ socket }) {
+function SetUser({ socket, gameStatus }) {
   const [userNameInput, updateUserName] = useState("");
   const [userName, setUserName] = useState();
+  const [readyStatus, setReadySatus] = useState(false);
 
   function addUserName(userNameInput) {
     socket.emit(SocketEvents.ADD_USER_TO_LOBBY, userNameInput);
@@ -29,6 +31,16 @@ function SetUser({ socket }) {
     };
   }, [userNameInput]);
 
+  function updateUserReady(status) {
+    const options = {
+      property: "readyStatus",
+      value: status,
+      userName,
+    };
+    socket.emit(SocketEvents.UPDATE_USER, options);
+    setReadySatus(status);
+  }
+
   if (!userName) {
     return (
       <div>
@@ -50,7 +62,22 @@ function SetUser({ socket }) {
       </div>
     );
   } else {
-    return <h2>UserName: {userName}</h2>;
+    return (
+      <div>
+        Click this when everyone is in the room!
+        <input
+          type="checkbox"
+          checked={readyStatus}
+          onChange={(e) => {
+            updateUserReady(true);
+          }}
+        />
+        <UserList socket={socket} />
+        <span>
+          GAME AUTOMATICALLY STARTS WHEN ALL PRESENT PLAYERS CLICK READY
+        </span>
+      </div>
+    );
   }
 }
 

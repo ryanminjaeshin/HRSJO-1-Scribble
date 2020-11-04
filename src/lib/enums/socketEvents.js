@@ -2,5 +2,8 @@ const SocketEvents = Object.freeze({
   ADD_USER_TO_LOBBY: "ADD_USER_TO_LOBBY",
   USER_MESSAGE: "USER_MESSAGE",
   LOBBY_MESSAGE: "LOBBY_MESSAGE",
+  USERS_UPDATED: "USERS_UPDATED",
+  UPDATE_USER: "UPDATE_USER",
+  START_GAME: "START_GAME",
 });
 export default SocketEvents;
