@@ -5,11 +5,13 @@ import SetUser from "./SetUser";
 // import Events from "../../lib/enums/events";
 import establishIoConnection from "../lib/socket/";
 import SocketEvents from "../lib/enums/socketEvents";
+import GameBoard from "./GameBoard";
 
 function GameLobby() {
   const [lobbyName] = useState(useParams().lobbyName);
   const [gameStatus, updateGameStatus] = useState();
   const [gameData, updateGameData] = useState();
+  const [initialUserState, updateInitialUserState] = useState();
   const socket = useRef(establishIoConnection(window.location.pathname))
     .current;
 
@@ -17,6 +19,7 @@ function GameLobby() {
     function startGame(message) {
       updateGameData(message.data);
       updateGameStatus(message.success);
+      updateInitialUserState(message.users);
     }
     socket.on(SocketEvents.START_GAME, startGame);
 
@@ -28,7 +31,15 @@ function GameLobby() {
   return (
     <div>
       <h3>LobbName: {lobbyName}</h3>
-      {gameStatus ? <DrawingBoard /> : <SetUser socket={socket} />}
+      {gameStatus ? (
+        <GameBoard
+          initialGameData={gameData}
+          initialUserStates={initialUserState}
+          socket={socket}
+        />
+      ) : (
+        <SetUser socket={socket} />
+      )}
       {<ChatRoom socket={socket} />}
     </div>
   );

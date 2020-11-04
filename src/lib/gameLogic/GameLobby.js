@@ -10,19 +10,54 @@ class GameLobby {
     this.users = {};
     this.totalRounds = 3;
     this.currentRound = 1;
-    this.roundTimer = 30;
+    this.timerLength = 5;
+    this.drawTimer = 5;
     this.currentDrawer = 0; //index
+    this.currentWord;
+    this.wordsDrawn = new Set();
   }
 
   //reducing timer
-  decrementRoundTimer() {
-    setInterval(() => {
-      this.roundTimer -= 1;
-      let target = this.lobbyName;
-      let message = { timeLeft: this.roundTimer };
-      let event = Events.ROUND_TIMER;
-      this.emitEvent(target, message, event);
+  decrementdrawTimer() {
+    const countDown = setInterval(() => {
+      this.drawTimer -= 1;
+      const decrementTimer = new EventOptions({
+        message: {
+          data: { drawTimer: this.drawTimer, currentRound: this.currentRound },
+        },
+        event: SocketEvents.DECREMENT_DRAW_TIMER,
+      });
+
+      this.emitEvent(decrementTimer);
+      if (this.drawTimer === 0) {
+        clearInterval(countDown);
+        this.drawTimer = this.timerLengh;
+        this.setUpNextDrawer();
+      }
     }, 1000);
+  }
+
+  setUpNextDrawer() {
+    if (Object.keys(this.users).length - 1 === this.currentDrawer) {
+      this.currentDrawer = 0;
+
+      if (this.currentRound === this.totalRounds) {
+        const gameOver = new EventOptions({
+          message: {
+            data: "WINNER",
+          },
+          event: SocketEvents.GAME_OVER,
+        });
+        this.emitEvent(gameOver);
+        return;
+      } else {
+        this.currentRound += 1;
+      }
+    } else {
+      this.currentDrawer += 1;
+    }
+    this.drawTimer = this.timerLength;
+    this.decrementdrawTimer();
   }
 
   addUser(userData) {
@@ -89,18 +124,20 @@ class GameLobby {
     const allUsersReady = Object.values(this.users).every(
       (user) => user.readyStatus
     );
-    const { totalRounds, currentRound, roundTimer, currentDrawer } = this;
+    const { totalRounds, currentRound, drawTimer, currentDrawer, users } = this;
 
-    const newUserUpdateMsg = new EventOptions({
+    const startGame = new EventOptions({
       message: {
         success: true,
-        data: { totalRounds, currentRound, roundTimer, currentDrawer },
+        data: { totalRounds, currentRound, drawTimer, currentDrawer },
+        users,
       },
       event: SocketEvents.START_GAME,
     });
 
     if (allUsersReady) {
-      this.emitEvent(newUserUpdateMsg);
+      this.emitEvent(startGame);
+      this.decrementdrawTimer();
     }
   }
   emitEvent(options) {
