@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import SocketEvents from "../lib/enums/socketEvents";
 import UserList from "./UserList";
 
-function SetUser({ socket, gameStatus }) {
+function SetUser({ socket, setUserName, userName }) {
   const [userNameInput, updateUserName] = useState("");
-  const [userName, setUserName] = useState();
   const [readyStatus, setReadySatus] = useState(false);
 
   function addUserName(userNameInput) {

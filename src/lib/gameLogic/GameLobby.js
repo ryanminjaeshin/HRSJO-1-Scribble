@@ -2,6 +2,8 @@ import User from "./User";
 import SocketEvents from "../enums/socketEvents";
 import { EventOptions } from "../utils";
 import { Socket } from "socket.io-client";
+import words from "../utils/dictionary";
+import dictionary from "../utils/dictionary";
 
 class GameLobby {
   constructor(nameSpace) {
@@ -14,9 +16,10 @@ class GameLobby {
     this.drawTimer = 5;
     this.currentDrawer = 0; //index
     this.currentDrawerName;
+    this.selectedWords = [];
     this.currentWord;
-    this.wordsDrawn = new Set();
   }
+  dp;
 
   //reducing timer
   decrementdrawTimer() {
@@ -32,7 +35,7 @@ class GameLobby {
         },
         event: SocketEvents.DECREMENT_DRAW_TIMER,
       });
-      console.log(this.currentDrawerName);
+
       this.emitEvent(decrementTimer);
       if (this.drawTimer === 0) {
         clearInterval(countDown);
@@ -40,6 +43,25 @@ class GameLobby {
         this.setUpNextDrawer();
       }
     }, 1000);
+  }
+
+  generateWordBank() {
+    let usedNumbers = {};
+    const requiredWords = Object.keys(this.users).length * this.totalRounds;
+
+    for (let i = 0; i < requiredWords; i++) {
+      if (Object.keys(usedNumbers) === dictionary.length) {
+        usedNumbers = {};
+      }
+      let index = Math.floor(Math.random() * dictionary.length);
+      while (usedNumbers[index]) {
+        index = Math.floor(Math.random() * dictionary.length);
+      }
+      usedNumbers[index] = true;
+      this.selectedWords.push(dictionary[index]);
+    }
+
+    this.setNextWord();
   }
 
   setUpNextDrawer() {
@@ -61,11 +83,25 @@ class GameLobby {
     } else {
       this.currentDrawer += 1;
     }
-    console.log(this.currentDrawer);
     this.currentDrawerName = Object.keys(this.users)[this.currentDrawer];
-    console.log(this.currentDrawerName);
+    this.setNextWord();
     this.drawTimer = this.timerLength;
     this.decrementdrawTimer();
+  }
+
+  setNextWord() {
+    this.currentWord = this.selectedWords.pop();
+    const currentUserSocket = this.users[this.currentDrawerName].userId;
+
+    console.log(currentUserSocket);
+    const userCurrentWord = new EventOptions({
+      message: {
+        data: this.currentWord,
+      },
+      event: SocketEvents.START_YOUR_TURN,
+      target: currentUserSocket,
+    });
+    this.emitEvent(userCurrentWord);
   }
 
   addUser(userData) {
@@ -132,25 +168,33 @@ class GameLobby {
       (user) => user.readyStatus
     );
 
-    this.currentDrawerName = Object.keys(this.users)[this.currentDrawer];
-    const {
-      totalRounds,
-      currentRound,
-      drawTimer,
-      currentDrawerName,
-      users,
-    } = this;
-
-    const startGame = new EventOptions({
-      message: {
-        success: true,
-        data: { totalRounds, currentRound, drawTimer, currentDrawerName },
-        users,
-      },
-      event: SocketEvents.START_GAME,
-    });
-
     if (allUsersReady) {
+      this.currentDrawerName = Object.keys(this.users)[this.currentDrawer];
+      this.generateWordBank();
+      const {
+        totalRounds,
+        currentRound,
+        drawTimer,
+        currentDrawerName,
+        currentWord,
+        users,
+      } = this;
+
+      const startGame = new EventOptions({
+        message: {
+          success: true,
+          data: {
+            totalRounds,
+            currentRound,
+            drawTimer,
+            currentDrawerName,
+            currentWord,
+          },
+          users,
+        },
+        event: SocketEvents.START_GAME,
+      });
+
       this.emitEvent(startGame);
       this.decrementdrawTimer();
     }

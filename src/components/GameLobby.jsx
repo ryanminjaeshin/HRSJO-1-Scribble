@@ -12,6 +12,7 @@ function GameLobby() {
   const [gameStatus, updateGameStatus] = useState();
   const [gameData, updateGameData] = useState();
   const [initialUserState, updateInitialUserState] = useState();
+  const [userName, setUserName] = useState();
   const socket = useRef(establishIoConnection(window.location.pathname))
     .current;
 
@@ -36,9 +37,14 @@ function GameLobby() {
           initialGameData={gameData}
           initialUserStates={initialUserState}
           socket={socket}
+          userName={userName}
         />
       ) : (
-        <SetUser socket={socket} />
+        <SetUser
+          socket={socket}
+          userName={userName}
+          setUserName={setUserName}
+        />
       )}
       {<ChatRoom socket={socket} />}
     </div>

@@ -7,5 +7,7 @@ const SocketEvents = Object.freeze({
   START_GAME: "START_GAME",
   DECREMENT_DRAW_TIMER: "DECREMENT_DRAW_TIMER",
   GAME_OVER: "GAME_OVER",
+  PRIVATE_MESSAGE: "PRIVATE_MESSAGE",
+  START_YOUR_TURN: "START_YOUR_TURN",
 });
 export default SocketEvents;
