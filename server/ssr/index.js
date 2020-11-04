@@ -6,6 +6,9 @@ import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom";
 import hbs from "handlebars";
 
+app.get("/", (req, res) => {
+  res.redirect("/home");
+});
 app.get("/home", function (req, res) {
   const redirect = { lobby: req.query.lobby };
   console.log("redirect: ", redirect);

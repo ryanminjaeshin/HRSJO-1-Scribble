@@ -3,9 +3,10 @@ import { Link, Redirect } from "react-router-dom";
 
 function CreateLobby({ redirect }) {
   const [lobbyName, updateLobbyName] = useState("");
-  console.log(redirect);
+
   if (redirect.lobby) {
-    return <Redirect to="/lobby" />;
+    console.info(`redirecting to ${redirect.lobby}`);
+    return <Redirect to={`/lobby-${redirect.lobby}`} />;
   }
   return (
     <div>
