@@ -18,7 +18,6 @@ function GameBoard({ initialGameData, initialUserState, socket, userName }) {
     }
 
     function updateWord(message) {
-      console.log(message);
       updateMyWord(message.data);
     }
     socket.on(SocketEvents.DECREMENT_DRAW_TIMER, decrementDrawTimer);
@@ -26,6 +25,7 @@ function GameBoard({ initialGameData, initialUserState, socket, userName }) {
 
     return () => {
       socket.off(SocketEvents.DECREMENT_DRAW_TIMER, decrementDrawTimer);
+      socket.off(SocketEvents.START_YOUR_TURN, updateWord);
     };
   }, [gameData, myWord]);
 

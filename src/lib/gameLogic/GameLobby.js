@@ -60,8 +60,6 @@ class GameLobby {
       usedNumbers[index] = true;
       this.selectedWords.push(dictionary[index]);
     }
-
-    this.setNextWord();
   }
 
   setUpNextDrawer() {
@@ -196,6 +194,7 @@ class GameLobby {
       });
 
       this.emitEvent(startGame);
+      this.setNextWord();
       this.decrementdrawTimer();
     }
   }
