@@ -1,10 +1,10 @@
 import User from "./User";
 import SocketEvents from "../enums/socketEvents";
-import { emitEvent } from "../utils";
 
 class GameLobby {
-  constructor(lobbyName) {
-    this.lobbyName = lobbyName;
+  constructor(dynamicNspLobby, nameSpace) {
+    this.lobbyName = nameSpace;
+    this.dynamicNspLobby = dynamicNspLobby;
     this.users = {};
     this.totalRounds = 3;
     this.currentRound = 1;
@@ -19,29 +19,34 @@ class GameLobby {
       let target = this.lobbyName;
       let message = { timeLeft: this.roundTimer };
       let event = Events.ROUND_TIMER;
-      emitEvent(target, message, event);
+      this.emitEvent(target, message, event);
     }, 1000);
   }
 
   addUser(userData) {
     const { userName, userId } = userData;
-    console.log(userId);
-    let message,
-      target,
-      event = SocketEvents.MESSAGES;
+    let message, target, event;
 
     if (!this.users[userName]) {
       console.log("user doesn't exist");
       this.users[userName] = new User(userName, userId);
-      console.log(this.users);
-      message = `${userName} has joined the lobby yo`;
-      target = this.lobbyName;
+      message = true;
+      event = SocketEvents.LOBBY_MESSAGE;
     } else {
       console.log("user exist");
-      message = `${userName} already taken buddy, try again`;
+      message = false;
       target = userId;
+      event = SocketEvents.USER_MESSAGE;
     }
-    emitEvent(target, message, event);
+    this.emitEvent(target, message, event);
+  }
+
+  emitEvent(target, message, event) {
+    if (!target) {
+      this.dynamicNspLobby.emit(event, message);
+    } else {
+      this.dynamicNspLobby.to(target).emit(event, message);
+    }
   }
 }
 

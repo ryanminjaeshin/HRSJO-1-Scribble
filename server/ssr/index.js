@@ -29,7 +29,7 @@ app.get("/home", function (req, res) {
   const hbsTemplate = hbs.compile(theHtml);
   const reactComp = renderToString(
     <StaticRouter location={req.url} context={context}>
-      <App redirect={"test"} />
+      <App redirect={""} />
     </StaticRouter>
   );
   const htmlToSend = hbsTemplate({ reactele: reactComp });
