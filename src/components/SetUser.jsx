@@ -5,25 +5,29 @@ function SetUser({ socket }) {
   const [userNameInput, updateUserName] = useState("");
   const [userName, setUserName] = useState();
 
-  function addUserName(userName) {
-    socket.emit(SocketEvents.ADD_USER_TO_LOBBY, userName);
+  function addUserName(userNameInput) {
+    socket.emit(SocketEvents.ADD_USER_TO_LOBBY, userNameInput);
   }
 
   useEffect(() => {
-    socket.on(SocketEvents.USER_MESSAGE, (success) => {
-      console.log("private", success);
-      if (!success) {
+    function validateUserName(message) {
+      console.log("private", message.success);
+      if (!message.success) {
         window.alert(`${userNameInput} is already taken, try again plz`);
+      } else {
+        console.log("lobby", message.success, userNameInput);
+        setUserName(userNameInput);
       }
-    });
+    }
 
-    socket.on(SocketEvents.LOBBY_MESSAGE, (success) => {
-      if (success) {
-        console.log("lobby", success);
-        setUserName(userName);
-      }
-    });
-  }, []);
+    socket.on(SocketEvents.USER_MESSAGE, validateUserName);
+    socket.on(SocketEvents.LOBBY_MESSAGE, validateUserName);
+
+    return () => {
+      socket.off(SocketEvents.LOBBY_MESSAGE, validateUserName);
+      socket.off(SocketEvents.USER_MESSAGE, validateUserName);
+    };
+  }, [userNameInput]);
 
   if (!userName) {
     return (
@@ -46,7 +50,7 @@ function SetUser({ socket }) {
       </div>
     );
   } else {
-    return <h2>{userName}</h2>;
+    return <h2>UserName: {userName}</h2>;
   }
 }
 

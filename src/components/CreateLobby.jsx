@@ -18,7 +18,7 @@ function CreateLobby({ redirect }) {
             value={lobbyName}
             onChange={(e) => updateLobbyName(e.target.value)}
           />
-          <Link to={"/lobby-" + lobbyName}>
+          <Link to={lobbyName}>
             <input type="submit" value="Create Lobby" />
           </Link>
         </label>

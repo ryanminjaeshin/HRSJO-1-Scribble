@@ -10,25 +10,18 @@ const lobbies = {};
 
 const dynamicNspLobby = io.of(/[\s\S]*/);
 
-console.log(
-  dynamicNspLobby.adapter.clients((_, clients) => {
-    chat.emit("connectionChange", { usersOnline: clients });
-  })
-);
-
 dynamicNspLobby.on("connect", (socket) => {
-  const nameSpace = socket.nsp.name;
+  const nameSpace = socket.nsp;
+  const nameSpaceName = socket.nsp.name;
 
-  if (!lobbies[nameSpace]) {
-    console.log(`new namespace lobby created: ${nameSpace}`);
-    lobbies[nameSpace] = new GameLobby(dynamicNspLobby, nameSpace);
+  if (!lobbies[nameSpaceName]) {
+    console.log(`new nameSpaceName lobby created: ${nameSpaceName}`);
+    lobbies[nameSpaceName] = new GameLobby(nameSpace);
   }
-  const currentLobby = lobbies[nameSpace];
+  const currentLobby = lobbies[nameSpaceName];
 
   socket.on(SocketEvents.ADD_USER_TO_LOBBY, (userName) => {
     const userObject = { userId: socket.id, userName };
     currentLobby.addUser(userObject);
   });
-
-  console.log(Object.keys(io.nsps));
 });

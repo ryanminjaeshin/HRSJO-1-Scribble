@@ -2,9 +2,9 @@ import User from "./User";
 import SocketEvents from "../enums/socketEvents";
 
 class GameLobby {
-  constructor(dynamicNspLobby, nameSpace) {
-    this.lobbyName = nameSpace;
-    this.dynamicNspLobby = dynamicNspLobby;
+  constructor(nameSpace) {
+    this.lobbyName = nameSpace.name;
+    this.nameSpace = nameSpace;
     this.users = {};
     this.totalRounds = 3;
     this.currentRound = 1;
@@ -28,13 +28,21 @@ class GameLobby {
     let message, target, event;
 
     if (!this.users[userName]) {
-      console.log("user doesn't exist");
+      console.log(`${userName} doesn't exist`);
       this.users[userName] = new User(userName, userId);
-      message = true;
+      message = {
+        success: true,
+        message: `${userName} has joined the lobby!`,
+        time: new Date(),
+      };
       event = SocketEvents.LOBBY_MESSAGE;
     } else {
-      console.log("user exist");
-      message = false;
+      console.log(`${userName} exists`);
+      message = {
+        success: true,
+        message: "User Exists already homie",
+        time: new Date(),
+      };
       target = userId;
       event = SocketEvents.USER_MESSAGE;
     }
@@ -43,9 +51,9 @@ class GameLobby {
 
   emitEvent(target, message, event) {
     if (!target) {
-      this.dynamicNspLobby.emit(event, message);
+      this.nameSpace.emit(event, message);
     } else {
-      this.dynamicNspLobby.to(target).emit(event, message);
+      this.nameSpace.to(target).emit(event, message);
     }
   }
 }
