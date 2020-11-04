@@ -12,14 +12,13 @@ class GameLobby {
     this.users = {};
     this.totalRounds = 3;
     this.currentRound = 1;
-    this.timerLength = 5;
-    this.drawTimer = 5;
+    this.timerLength = 60;
+    this.drawTimer = this.timerLength;
     this.currentDrawer = 0; //index
     this.currentDrawerName;
     this.selectedWords = [];
     this.currentWord;
   }
-  dp;
 
   //reducing timer
   decrementdrawTimer() {
@@ -206,7 +205,11 @@ class GameLobby {
 
       let newScore = this.users[userName].currentScore + points;
 
+      console.log(this.users[userName].currentScore, "currentScore");
+      console.log(points, "points");
+
       this.updateUser({ userName, property: "currentScore", value: newScore });
+      console.log(this.users);
       return true;
     } else {
       //send a message
@@ -215,7 +218,7 @@ class GameLobby {
   }
 
   calculatePoints() {
-    return Math.floor((this.drawerTimer / this.timerLength) * 100);
+    return Math.floor((this.drawTimer / this.timerLength) * 100);
   }
 
   emitEvent(options) {

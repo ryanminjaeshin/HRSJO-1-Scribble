@@ -1,12 +1,5 @@
-import React, { useEffect } from "react";
-import {
-  Switch,
-  Route,
-  Link,
-  HashRouter,
-  BrowserRouter,
-  Redirect,
-} from "react-router-dom";
+import React from "react";
+import { Switch, Route } from "react-router-dom";
 import CreateLobby from "./CreateLobby";
 import GameLobby from "./GameLobby";
 
