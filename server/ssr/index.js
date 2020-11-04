@@ -11,7 +11,6 @@ app.get("/", (req, res) => {
 });
 app.get("/home", function (req, res) {
   const redirect = { lobby: req.query.lobby };
-  console.log("redirect: ", redirect);
   const context = {};
   const theHtml = `
     <html>

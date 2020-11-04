@@ -8,8 +8,7 @@ import establishIoConnection from "../lib/socket/index.js";
 function GameLobby() {
   const [lobbyName] = useState(useParams().lobbyName);
   const [userName, setUserName] = useState();
-  const socket = useRef(establishIoConnection(window.location.hash));
-
+  const socket = useRef(establishIoConnection(window.location.pathname));
   return (
     <div>
       <h3>ID:, {lobbyName}</h3>
