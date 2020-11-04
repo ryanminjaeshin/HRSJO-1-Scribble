@@ -6,6 +6,7 @@ app.use(compression());
 app.use(express.static("public"));
 
 const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 const socket = require("./socket/index");
 const ssr = require("./ssr/index");
 
@@ -14,4 +15,4 @@ http.listen(port, function listenHandler() {
   console.info(`Running on ${port}...`);
 });
 
-export { app, http };
+export { app, http, io };

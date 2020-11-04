@@ -1,6 +1,6 @@
 import { app } from "../index";
 import url from "url";
-import App from "../../src/components/app";
+import App from "../../src/components/App";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { StaticRouter } from "react-router-dom";

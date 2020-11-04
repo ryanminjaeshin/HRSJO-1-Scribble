@@ -6,7 +6,7 @@ function CreateLobby({ redirect }) {
 
   if (redirect.lobby) {
     console.info(`redirecting to ${redirect.lobby}`);
-    return <Redirect to={`/lobby-${redirect.lobby}`} />;
+    return <Redirect to={redirect.lobby} />;
   }
   return (
     <div>
