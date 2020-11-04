@@ -10,12 +10,15 @@ import {
 import CreateLobby from "./CreateLobby";
 import GameLobby from "./GameLobby";
 
-function App(props) {
-  console.log(props);
+function App({ redirect }) {
   return (
     <div>
       <Switch>
-        <Route exact path="/home" children={<CreateLobby />} />
+        <Route
+          exact
+          path="/home"
+          children={<CreateLobby redirect={redirect} />}
+        />
         <Route path="/:lobbyName" children={<GameLobby />} />
       </Switch>
     </div>

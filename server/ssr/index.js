@@ -7,7 +7,8 @@ import { StaticRouter } from "react-router-dom";
 import hbs from "handlebars";
 
 app.get("/home", function (req, res) {
-  const redirect = req.query.lobby;
+  const redirect = { lobby: req.query.lobby };
+  console.log("redirect: ", redirect);
   const context = {};
   const theHtml = `
     <html>
@@ -15,7 +16,7 @@ app.get("/home", function (req, res) {
         <title>Scribble Test</title>
       </head>
       <body>
-        
+      <script>window.PROPS=${JSON.stringify(redirect)}</script>
         <div id="app">NOT RENDERED</div>
         <script type="text/javascript" src="/app.js"></script>
         <script type="text/javascript" src/vendor.js"></script>
