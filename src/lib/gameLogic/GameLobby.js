@@ -13,6 +13,7 @@ class GameLobby {
     this.timerLength = 5;
     this.drawTimer = 5;
     this.currentDrawer = 0; //index
+    this.currentDrawerName;
     this.currentWord;
     this.wordsDrawn = new Set();
   }
@@ -23,11 +24,15 @@ class GameLobby {
       this.drawTimer -= 1;
       const decrementTimer = new EventOptions({
         message: {
-          data: { drawTimer: this.drawTimer, currentRound: this.currentRound },
+          data: {
+            drawTimer: this.drawTimer,
+            currentRound: this.currentRound,
+            currentDrawerName: this.currentDrawerName,
+          },
         },
         event: SocketEvents.DECREMENT_DRAW_TIMER,
       });
-
+      console.log(this.currentDrawerName);
       this.emitEvent(decrementTimer);
       if (this.drawTimer === 0) {
         clearInterval(countDown);
@@ -56,6 +61,9 @@ class GameLobby {
     } else {
       this.currentDrawer += 1;
     }
+    console.log(this.currentDrawer);
+    this.currentDrawerName = Object.keys(this.users)[this.currentDrawer];
+    console.log(this.currentDrawerName);
     this.drawTimer = this.timerLength;
     this.decrementdrawTimer();
   }
@@ -105,7 +113,6 @@ class GameLobby {
   }
 
   updateUser(options) {
-    console.log(options);
     this.users[options.userName].updateProperty(
       options.property,
       options.value
@@ -124,12 +131,20 @@ class GameLobby {
     const allUsersReady = Object.values(this.users).every(
       (user) => user.readyStatus
     );
-    const { totalRounds, currentRound, drawTimer, currentDrawer, users } = this;
+
+    this.currentDrawerName = Object.keys(this.users)[this.currentDrawer];
+    const {
+      totalRounds,
+      currentRound,
+      drawTimer,
+      currentDrawerName,
+      users,
+    } = this;
 
     const startGame = new EventOptions({
       message: {
         success: true,
-        data: { totalRounds, currentRound, drawTimer, currentDrawer },
+        data: { totalRounds, currentRound, drawTimer, currentDrawerName },
         users,
       },
       event: SocketEvents.START_GAME,
