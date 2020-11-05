@@ -2,6 +2,7 @@ import React from "react";
 import moment from "moment";
 
 function Chat({ message }) {
+  console.log('MESSAGE : ', message)
   return (
     <div>
       <p>{message.message}</p>

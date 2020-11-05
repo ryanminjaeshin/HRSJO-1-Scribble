@@ -38,7 +38,7 @@ class GameLobby {
       this.emitEvent(decrementTimer);
       if (this.drawTimer === 0) {
         clearInterval(countDown);
-        this.drawTimer = this.timerLengh;
+        this.drawTimer = this.timerLength;
         this.setUpNextDrawer();
       }
     }, 1000);

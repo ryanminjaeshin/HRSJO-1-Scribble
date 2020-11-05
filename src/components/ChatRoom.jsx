@@ -5,7 +5,7 @@ import Chat from "./Chat";
 
 function ChatRoom({ socket, userName }) {
   const [messages, updateMessage] = useState([]);
-  const [chatInput, updateChatInput] = useState();
+  const [chatInput, updateChatInput] = useState('');
 
   useEffect(() => {
     function addMessages(message) {
@@ -38,7 +38,7 @@ function ChatRoom({ socket, userName }) {
       <input
         type="submit"
         value="enter"
-        onClick={() => submitChatMessage({ guess: chatInput, userName })}
+        onClick={() => {submitChatMessage({ guess: chatInput, userName });  updateChatInput('')}}
       />
     </>
   );

@@ -6,6 +6,7 @@ const lobbies = {};
 
 const dynamicNspLobby = io.of(/[\s\S]*/);
 
+
 dynamicNspLobby.on("connect", (socket) => {
   const nameSpace = socket.nsp;
   const nameSpaceName = socket.nsp.name;
