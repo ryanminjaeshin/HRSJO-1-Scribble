@@ -5,11 +5,12 @@ import Chat from "./Chat";
 
 function ChatRoom({ socket, userName }) {
   const [messages, updateMessage] = useState([]);
-  const [chatInput, updateChatInput] = useState('');
+  const [chatInput, updateChatInput] = useState();
 
   useEffect(() => {
     function addMessages(message) {
       let newMessages = messages.concat(message);
+      console.log('NEWMESSAGE : ',newMessages);
       updateMessage(newMessages);
     }
     socket.on(SocketEvents.LOBBY_MESSAGE, addMessages);
@@ -21,7 +22,13 @@ function ChatRoom({ socket, userName }) {
 
   function submitChatMessage(chatInput) {
     socket.emit(SocketEvents.SUBMIT_CHAT_MESSAGE, chatInput, (isCorrect) => {
-      console.log(isCorrect);
+      if (isCorrect) {
+        console.log(isCorrect);
+      } else {
+        messages.push({ message: `${chatInput.userName}: ${chatInput.guess}` });
+        console.log(messages);
+        updateMessage(messages);
+      }
     });
   }
 
@@ -38,7 +45,7 @@ function ChatRoom({ socket, userName }) {
       <input
         type="submit"
         value="enter"
-        onClick={() => {submitChatMessage({ guess: chatInput, userName });  updateChatInput('')}}
+        onClick={() => {  submitChatMessage({ guess: chatInput, userName }); updateChatInput('');  }}
       />
     </>
   );

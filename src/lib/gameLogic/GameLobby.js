@@ -17,7 +17,7 @@ class GameLobby {
     this.currentDrawer = 0; //index
     this.currentDrawerName;
     this.selectedWords = [];
-    this.currentWord;
+    this.currentWord = '';
   }
 
   //reducing timer

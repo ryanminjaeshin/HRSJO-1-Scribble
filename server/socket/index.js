@@ -27,6 +27,7 @@ dynamicNspLobby.on("connect", (socket) => {
     currentLobby.checkLobbyReadyStatus();
   });
 
+  // use this somehow -- karin
   socket.on(SocketEvents.SUBMIT_CHAT_MESSAGE, (data, callback) => {
     let isCorrect = currentLobby.evaluateGuess(data);
     callback(isCorrect);
