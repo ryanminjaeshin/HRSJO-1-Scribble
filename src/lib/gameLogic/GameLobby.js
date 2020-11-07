@@ -224,15 +224,12 @@ class GameLobby {
     return Math.floor((this.drawTimer / this.timerLength) * 100);
   }
 
-  updateMessage(message) {
+  updateMessage({message}) {
     this.messages.push(message);
-    console.log(message);
+    console.log('message:', message);
     console.log("MESSAGE FROM GAMELOBBY : ", this.messages);
     const newChatMessage = new EventOptions({
-      message: {
-        success: true,
-        message,
-      },
+      message: message.guess,
       event: SocketEvents.USER_MESSAGE,
     });
 
