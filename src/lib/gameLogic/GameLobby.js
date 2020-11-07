@@ -224,12 +224,18 @@ class GameLobby {
     return Math.floor((this.drawTimer / this.timerLength) * 100);
   }
 
-  updateMessage({message}) {
+  updateMessage(message) {
     this.messages.push(message);
     console.log('message:', message);
-    console.log("MESSAGE FROM GAMELOBBY : ", this.messages);
+    // console.log("MESSAGE FROM GAMELOBBY : ", this.messages);
+    let chatMessage = '';
+    if (message.evaluate) {
+      chatMessage = `${message.userName} guessed the word.`;
+    } else {
+      chatMessage = `${message.userName}: ${message.guess}`;
+    }
     const newChatMessage = new EventOptions({
-      message: message.guess,
+      message: {message: chatMessage},
       event: SocketEvents.USER_MESSAGE,
     });
 
@@ -247,7 +253,7 @@ class GameLobby {
       }
     }
     if (options.event !== 'DECREMENT_DRAW_TIMER') {
-      console.log('EMIT OPTIONS : ', options);
+      // console.log('EMIT OPTIONS : ', options);
     }
 
   }
