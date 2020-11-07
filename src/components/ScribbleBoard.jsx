@@ -19,7 +19,7 @@ function ScribbleBoard({ socket, currentDrawer }) {
   };
 
   function sendmouse(xpos, ypos) {
-    console.log("sendmouse: " + xpos + " " + ypos);
+    // console.log("sendmouse: " + xpos + " " + ypos);
 
     // Make a little object with  and y
     var data = {

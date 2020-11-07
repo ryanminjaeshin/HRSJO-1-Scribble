@@ -4,7 +4,7 @@ import UserList from "./UserList";
 
 function SetUser({ socket, setUserName, userName }) {
   const [userNameInput, updateUserName] = useState("");
-  const [readyStatus, setReadySatus] = useState(false);
+  const [readyStatus, setReadyStatus] = useState(false);
 
   function addUserName(userNameInput) {
     socket.emit(SocketEvents.ADD_USER_TO_LOBBY, userNameInput);
@@ -37,7 +37,7 @@ function SetUser({ socket, setUserName, userName }) {
       userName,
     };
     socket.emit(SocketEvents.UPDATE_USER, options);
-    setReadySatus(status);
+    setReadyStatus(status);
   }
 
   if (!userName) {
