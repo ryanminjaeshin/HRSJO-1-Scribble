@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import SocketEvents from "../lib/enums/socketEvents";
 import moment from "moment";
 import Chat from "./Chat";
+import GameLobby from "../lib/gameLogic/GameLobby.js";
 
 function ChatRoom({ socket, userName }) {
   const [messages, updateMessage] = useState([]);
@@ -10,10 +11,11 @@ function ChatRoom({ socket, userName }) {
   useEffect(() => {
     function addMessages(message) {
       let newMessages = messages.concat(message);
-      console.log('NEWMESSAGE : ',newMessages);
+      console.log('USE EFFECT newMessages : ',newMessages);
       updateMessage(newMessages);
     }
     socket.on(SocketEvents.LOBBY_MESSAGE, addMessages);
+    socket.on(SocketEvents.USER_MESSAGE, addMessages);
 
     return () => {
       socket.off(SocketEvents.LOBBY_MESSAGE, addMessages);
@@ -21,14 +23,8 @@ function ChatRoom({ socket, userName }) {
   }, [messages]);
 
   function submitChatMessage(chatInput) {
-    socket.emit(SocketEvents.SUBMIT_CHAT_MESSAGE, chatInput, (isCorrect) => {
-      if (isCorrect) {
-        console.log(isCorrect);
-      } else {
-        messages.push({ message: `${chatInput.userName}: ${chatInput.guess}` });
-        console.log(messages);
-        updateMessage(messages);
-      }
+    socket.emit(SocketEvents.SUBMIT_CHAT_MESSAGE, chatInput, (response) => {
+      console.log('submitChatMessage : ', response);
     });
   }
 
@@ -45,7 +41,10 @@ function ChatRoom({ socket, userName }) {
       <input
         type="submit"
         value="enter"
-        onClick={() => {  submitChatMessage({ guess: chatInput, userName }); updateChatInput('');  }}
+        onClick={() => {
+          submitChatMessage({ guess: chatInput, userName });
+          updateChatInput('');
+        }}
       />
     </>
   );

@@ -27,10 +27,16 @@ dynamicNspLobby.on("connect", (socket) => {
     currentLobby.checkLobbyReadyStatus();
   });
 
-  // use this somehow -- karin
   socket.on(SocketEvents.SUBMIT_CHAT_MESSAGE, (data, callback) => {
     let isCorrect = currentLobby.evaluateGuess(data);
-    callback(isCorrect);
+    // socket.to(currentLobby).emit(SocketEvents.USER_MESSAGE, {message: data.guess});
+    console.log('DATA : ', data);
+    // callback([data, isCorrect]);
+
+    currentLobby.updateMessage(data);
+    // karin theory
+    // dynamicNspLobby.to(currentLobby).emit(/*IDK*/SocketEvents.SUBMIT_CHAT_MESSAGE, { user: data.user, text: data.message });
+    // callback();
   });
 
   socket.on(SocketEvents.DRAW, function (data) {

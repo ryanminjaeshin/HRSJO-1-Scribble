@@ -5,7 +5,7 @@ function Chat({ message }) {
   console.log('MESSAGE : ', message)
   return (
     <div>
-      <p>{message.message}</p>
+      <p>{message.message.guess}</p>
       <span className="time-left">{moment(Date.now()).format("ddd, hA")}</span>
     </div>
   );

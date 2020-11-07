@@ -1,4 +1,5 @@
 import User from "./User";
+import Message from "./Message";
 import SocketEvents from "../enums/socketEvents";
 import { EventOptions } from "../utils";
 import { Socket } from "socket.io-client";
@@ -18,6 +19,7 @@ class GameLobby {
     this.currentDrawerName;
     this.selectedWords = [];
     this.currentWord = '';
+    this.messages = [];
   }
 
   //reducing timer
@@ -159,6 +161,7 @@ class GameLobby {
 
     this.emitEvent(newUserUpdateMsg);
   }
+
   checkLobbyReadyStatus() {
     const allUsersReady = Object.values(this.users).every(
       (user) => user.readyStatus
@@ -221,6 +224,21 @@ class GameLobby {
     return Math.floor((this.drawTimer / this.timerLength) * 100);
   }
 
+  updateMessage(message) {
+    this.messages.push(message);
+    console.log(message);
+    console.log("MESSAGE FROM GAMELOBBY : ", this.messages);
+    const newChatMessage = new EventOptions({
+      message: {
+        success: true,
+        message,
+      },
+      event: SocketEvents.USER_MESSAGE,
+    });
+
+    this.emitEvent(newChatMessage);
+  }
+
   emitEvent(options) {
     if (Array.isArray(options)) {
       options.forEach((option) => this.emitEvent(option));
@@ -231,6 +249,10 @@ class GameLobby {
         this.nameSpace.to(options.target).emit(options.event, options.message);
       }
     }
+    if (options.event !== 'DECREMENT_DRAW_TIMER') {
+      console.log('EMIT OPTIONS : ', options);
+    }
+
   }
 }
 
